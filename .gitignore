@@ -1,3 +1,4 @@
 *.txt
 *.js
+app
 node_modules
