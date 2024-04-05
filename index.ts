@@ -44,8 +44,23 @@ const getData = () : citiesNodes[] => {
         }
     }
 
-    for(let i: number = 1; i < citiesNodesArray.length; i++){
-       
+    for(let i: number = 0; i < citiesNodesArray.length; i++){
+        const from = cities.indexOf(citiesNodesArray[i].from);
+        const to = cities.indexOf(citiesNodesArray[i].to);
+        if(similarityMatrix[from][to] == 0){
+            similarityMatrix[from][to] = Number(citiesNodesArray[i].time);
+        }
+
+        if(similarityMatrix[to][from] == 0){
+            similarityMatrix[to][from] = Number(citiesNodesArray[i].time);
+        }
+    }
+
+    for(let i: number = 0; i<Number(nodesAmmount);i++){
+        for(let j: number = 0; j<Number(nodesAmmount);j++){
+            process.stdout.write(String(similarityMatrix[i][j]) + ' ');
+        }
+        process.stdout.write('\n');
     }
 
     return citiesNodesArray;
