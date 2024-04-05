@@ -1,14 +1,17 @@
 import * as fs from 'fs';
 import { citiesNodes } from './shared/citiesNodes';
+import { log } from 'console';
 
 let roads: citiesNodes[] = [];
+let citiesNodesArray: citiesNodes[] = [];
+let cities: string[] = [];
+const nodes: string[] = fs.readFileSync('data.txt', 'utf-8').split('\r\n');
+let visitedNodes: boolean[] = [];
+let similarityMatrix: number[][] = [];
 
-const getData = () : citiesNodes[] => {
-    const nodes: string[] = fs.readFileSync('data.txt', 'utf-8').split('\r\n');
-    let citiesNodesArray: citiesNodes[] = []; 
-    let cities: string[] = [];
+const [nodesAmmount, startNode] = nodes.shift().split(" ");
 
-    const [nodesAmmount, startNode] = nodes.shift().split(" ");
+const getData = () : void => {
 
     for(let i: number = 0; i < nodes.length; i++){
         const [from, to, time] = nodes[i].split(" ");
@@ -30,8 +33,6 @@ const getData = () : citiesNodes[] => {
     }
 
     console.log(cities);
-
-    let similarityMatrix: number[][] = [];
 
     for(let i: number = 0; i<Number(nodesAmmount);i++){
         similarityMatrix[i] = [];
@@ -56,16 +57,50 @@ const getData = () : citiesNodes[] => {
         }
     }
 
+    /*
     for(let i: number = 0; i<Number(nodesAmmount);i++){
         for(let j: number = 0; j<Number(nodesAmmount);j++){
             process.stdout.write(String(similarityMatrix[i][j]) + ' ');
         }
         process.stdout.write('\n');
     }
-
-    return citiesNodesArray;
+    */
 }
 
+getData();
 
+for(let i: number = 0; i<cities.length;i++){
+    visitedNodes[i] = false;
+}
 
-roads = getData();
+let sumOfEdges: number = 2147483647;
+let helperSumOfEdges: number = 0;
+let nodesStack: string[] = [];
+const helperNodesStack: string[] = [];
+
+const tsp = (currentNode: string): void => {
+    helperNodesStack.push(currentNode);
+    if(helperNodesStack.length < Number(nodesAmmount)){
+        visitedNodes[cities.indexOf(currentNode)] = true;
+        for(let i:number = 0; i<Number(nodesAmmount); i++){
+            if (similarityMatrix[cities.indexOf(currentNode)] && !visitedNodes[i]) {
+                helperSumOfEdges += similarityMatrix[cities.indexOf(currentNode)][i];
+                tsp(cities[i]);
+                helperSumOfEdges -= similarityMatrix[cities.indexOf(currentNode)][i];
+            }
+        }
+        visitedNodes[cities.indexOf(currentNode)] = false; 
+    } else if(helperNodesStack.length === Number(nodesAmmount)){
+        helperSumOfEdges += similarityMatrix[cities.indexOf(currentNode)][cities.indexOf(startNode)];
+        if(helperSumOfEdges < sumOfEdges){
+            sumOfEdges = helperSumOfEdges;
+            nodesStack = [...helperNodesStack];
+            console.log("Aktualna minimalna wartość ścieżki: " + sumOfEdges);
+        }
+        helperSumOfEdges -= similarityMatrix[cities.indexOf(currentNode)][cities.indexOf(startNode)];
+    }
+    helperNodesStack.pop(); 
+}
+
+tsp(startNode);
+console.log(sumOfEdges);
