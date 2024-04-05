@@ -19,14 +19,10 @@ const getData = () : citiesNodes[] => {
         citiesNodesArray.push(cityNode);
     }
 
-    console.log(startNode, nodesAmmount);
-
     cities.push(citiesNodesArray[0].from);
     cities.push(citiesNodesArray[0].to);
 
     for(let i: number = 1; i < citiesNodesArray.length; i++){
-        const previous = citiesNodesArray[i-1].to;
-        const current =  citiesNodesArray[i].to;
         if(!cities.includes(citiesNodesArray[i].to) && !cities.includes(citiesNodesArray[i].from)){
             cities.push(citiesNodesArray[i].to);
             cities.push(citiesNodesArray[i].from);
@@ -35,10 +31,26 @@ const getData = () : citiesNodes[] => {
 
     console.log(cities);
 
+    let similarityMatrix: number[][] = [];
+
+    for(let i: number = 0; i<Number(nodesAmmount);i++){
+        similarityMatrix[i] = [];
+        for(let j: number = 0; j<Number(nodesAmmount);j++){
+            if(i===j){
+                similarityMatrix[i][j] = 1;
+            } else {
+                similarityMatrix[i][j] = 0;
+            }
+        }
+    }
+
+    for(let i: number = 1; i < citiesNodesArray.length; i++){
+       
+    }
+
     return citiesNodesArray;
 }
 
 
 
 roads = getData();
-console.log(roads);
